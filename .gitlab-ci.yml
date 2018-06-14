@@ -1,0 +1,31 @@
+---
+image: williamyeh/ansible:ubuntu16.04
+
+before_script:
+  - apt-get update -qq
+  - apt-get install -y git python-apt
+  - pip install -r requirements.txt
+  - ansible-galaxy install -r tests/requirements.yml
+
+validate:
+  script:
+    - molecule lint
+    - cd tests
+    - ansible-playbook test.yml -i inventory --check
+
+test_azure_iot:
+  script:
+    - ansible-playbook tests/test.yml -i tests/inventory
+
+package_role:
+  script:
+    - mkdir packages
+    - >
+      tar -czf packages/azure-iot.tar.gz
+      vars tasks meta files handlers defaults *.md
+
+artifacts:
+  untracked: true
+  paths:
+    - packages/
+  only: tags
