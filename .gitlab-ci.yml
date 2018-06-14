@@ -22,7 +22,7 @@ package_role:
     - mkdir packages
     - >
       tar -czf packages/azure-iot.tar.gz
-      vars tasks meta files handlers defaults *.md
+      vars tasks meta handlers defaults *.md
   artifacts:
     paths:
       - packages/
