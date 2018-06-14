@@ -3,6 +3,11 @@ Azure IoT
 
 This role provides features to create and manage Azure IoT resources.
 
+Build Status
+------------
+
+[![pipeline status](https://gitlab.eng.vmware.com/vmworld2018/ansible-role-azure-iot/badges/master/pipeline.svg)](https://gitlab.eng.vmware.com/vmworld2018/ansible-role-azure-iot/commits/master)
+
 Requirements
 ------------
 

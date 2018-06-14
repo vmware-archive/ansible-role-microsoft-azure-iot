@@ -23,9 +23,7 @@ package_role:
     - >
       tar -czf packages/azure-iot.tar.gz
       vars tasks meta files handlers defaults *.md
-
-artifacts:
-  untracked: true
-  paths:
-    - packages/
-  only: tags
+  artifacts:
+    paths:
+      - packages/
+    expire_in: 1 week
