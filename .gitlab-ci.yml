@@ -6,6 +6,10 @@ before_script:
   - apt-get install -y git python-apt
   - pip install -r requirements.txt
   - ansible-galaxy install -r tests/requirements.yml
+  - cp extra_vars.yml.sample extra_vars.yml
+  - sed -ri "s:azure_cli_application_id:$AZURE_CLI_APPLICATION_ID:" extra_vars.yml
+  - sed -ri "s:azure_cli_application_key:$AZURE_CLI_APPLICATION_KEY:" extra_vars.yml
+  - sed -ri "s:azure_cli_tenant_id:$AZURE_CLI_TENANT_ID:" extra_vars.yml
 
 validate:
   script:
@@ -15,7 +19,14 @@ validate:
 
 test_azure_iot:
   script:
-    - ansible-playbook tests/test.yml -i tests/inventory
+    - >
+      ansible-playbook tests/test.yml -i tests/inventory
+      --extra-vars @extra_vars.yml
+
+test_azure_iot_docker:
+  script:
+    - docker build -t vmware/azure-iot .
+    - docker run -it vmware/azure-iot
 
 package_role:
   script:

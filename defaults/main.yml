@@ -1,2 +1,13 @@
 ---
 # defaults file for ansible-role-azure-iot
+
+# Azure service principal credentials.
+azure_cli_application_id: FIXME-ADD-YOUR-VALUE-HERE
+azure_cli_application_key: FIXME-ADD-YOUR-VALUE-HERE
+azure_cli_tenant_id: FIXME-ADD-YOUR-VALUE-HERE
+
+azure_iot_group: IoTEdge
+
+azure_iot_location: westus
+
+azure_iot_hub_name: IoTHubName

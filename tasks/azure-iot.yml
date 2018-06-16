@@ -3,6 +3,36 @@
 ---
 # These tasks establish basic IoT functionality.
 
-- name: show hub to install
+- name: Collect CLI args if any
+  set_fact: az="az {{ lookup('env','AZ_ARGS') }}"
+
+- name: show hub to create
   debug:
-    msg: "Creating IoT hub 'hub'."
+    msg: "Creating IoT hub '{{ azure_iot_hub_name }}'."
+
+- name: Just-in-time Azure CLI install for MacOSX
+  command: brew install azure-cli
+  when: ansible_distribution == "MacOSX"
+
+- name: validate Azure tenant
+  command: >
+    {{ az }} account show --query 'tenantId' -o tsv
+  register: show_tenant
+  ignore_errors: true
+  when: azure_cli_tenant_id is defined
+
+- name: Perform Azure login
+  command: >
+    {{ az }} login --service-principal
+    -u {{ azure_cli_application_id }} -p {{ azure_cli_application_key }}
+    --tenant {{ azure_cli_tenant_id }}
+  when:
+    - not ansible_check_mode
+    - show_tenant.rc != 0
+
+- name: create Azure resource group
+  command: >
+    {{ az }} group create
+    --name {{ azure_iot_group }}
+    --location {{ azure_iot_location }}
+  when: azure_iot_group is defined

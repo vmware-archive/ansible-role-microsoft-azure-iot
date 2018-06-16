@@ -5,3 +5,4 @@ inventory
 *.retry
 # Compiled files
 *.pyc
+packages/

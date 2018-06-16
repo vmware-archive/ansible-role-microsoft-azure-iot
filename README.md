@@ -34,6 +34,37 @@ Here's an example playbook:
       roles:
          - { role: vmware.azure-iot }
 
+Getting Started
+---------------
+
+For development or testing of this role, follow these steps.
+
+* Clone this repo
+* Install ansible and other requirements with pip:
+  ```
+  pip install -r requirements.txt
+  ```
+* Install required dependency roles
+  ```
+  ansible-galaxy install -r requirements.yml
+  ```
+* You can test the role with:
+  ```
+  molecule converge
+  ```
+
+Alternatively, you can build a docker container and test that way.
+
+* Clone this repo
+* Build the docker images
+  ```
+  docker build -t vmware/azure-iot .
+  ```
+* Run the image on the target role
+  ```
+  docker run -it azure-iot
+  ```
+
 License
 -------
 

@@ -1,7 +1,7 @@
 ---
 dependency:
   name: galaxy
-  requirements_file: ../../tests/requirements.yml
+  requirements_file: ../../requirements.yml
 driver:
   name: docker
 lint:
@@ -13,6 +13,11 @@ provisioner:
   name: ansible
   lint:
     name: ansible-lint
+  options:
+    extra-vars:
+      azure_cli_application_id: ${azure_cli_application_id}
+      azure_cli_application_key: ${azure_cli_application_key}
+      azure_cli_tenant_id: ${azure_cli_tenant_id}
 scenario:
   name: default
 verifier:
