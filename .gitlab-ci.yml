@@ -7,6 +7,7 @@ before_script:
   - pip install -r requirements.txt
   - ansible-galaxy install -r tests/requirements.yml
   - cp extra_vars.yml.sample extra_vars.yml
+  - echo "Building config for tenant: $azure_cli_tenant_id"
   - sed -ri "s:AZURE_CLI_APPLICATION_ID:$azure_cli_application_id:" extra_vars.yml
   - sed -ri "s:AZURE_CLI_APPLICATION_KEY:$azure_cli_application_key:" extra_vars.yml
   - sed -ri "s:AZURE_CLI_TENANT_ID:$azure_cli_tenant_id:" extra_vars.yml
@@ -25,6 +26,9 @@ test_azure_iot:
       --extra-vars @extra_vars.yml
 
 test_azure_iot_docker:
+  image: docker:latest
+  variables:
+    CI_DEBUG_TRACE: "true"
   script:
     - docker build -t vmware/azure-iot .
     - docker run -it vmware/azure-iot
