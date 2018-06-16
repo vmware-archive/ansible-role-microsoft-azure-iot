@@ -26,10 +26,8 @@ test_azure_iot:
       --extra-vars @extra_vars.yml
 
 test_azure_iot_docker:
-  image: docker:latest
-  variables:
-    CI_DEBUG_TRACE: "true"
   script:
+    - apt-get install -y docker.io
     - docker build -t vmware/azure-iot .
     - docker run -it vmware/azure-iot
 
