@@ -16,8 +16,8 @@ validate:
   script:
     - molecule lint
     - cd tests
-    -  # following test doesn't work, dependent role doesn't support check
-    -  # ansible-playbook test.yml -i inventory --check --extra-vars="@extra_vars.yml
+    # following test doesn't work, dependent role doesn't support check
+    # ansible-playbook test.yml -i inventory --check --extra-vars="@extra_vars.yml
 
 test_azure_iot:
   script:
