@@ -14,6 +14,19 @@
   command: brew install azure-cli
   when: ansible_distribution == "MacOSX"
 
+- name: List Azure CLI extensions
+  command: >
+    {{ az }} extension list
+  register: az_extensions
+  when: azure_cli_tenant_id is defined
+
+- name: Add Azure CLI iot extensions
+  command: >
+    {{ az }} extension add --name azure-cli-iot-ext
+  when:
+    - az_extensions is defined
+    - "'azure-cli-iot-ext' not in az_extensions.stdout"
+
 - name: validate Azure tenant
   command: >
     {{ az }} account show --query 'tenantId' -o tsv
@@ -36,3 +49,23 @@
     --name {{ azure_iot_group }}
     --location {{ azure_iot_location }}
   when: azure_iot_group is defined
+
+- name: create Azure hub in the resource group
+  command: >
+    {{ az }} iot hub create
+    --resource-group {{ azure_iot_group }}
+    --name {{ azure_iot_hub_name }}
+    --sku {{ azure_iot_hub_sku }}
+  when:
+    - azure_iot_group is defined
+    - azure_iot_hub_name is defined
+
+- name: create Edge Device attached to the hub
+  command: >
+    {{ az }} iot device create
+    --device-id {{ azure_iot_hub_name }}-edge
+    --hub-name {{ azure_iot_hub_name }}
+    --resource-group {{ azure_iot_group }}
+  when:
+    - azure_iot_group is defined
+    - azure_iot_hub_name is defined

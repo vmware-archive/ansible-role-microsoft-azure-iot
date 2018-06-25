@@ -11,3 +11,5 @@ azure_iot_group: IoTEdge
 azure_iot_location: westus
 
 azure_iot_hub_name: IoTHubName
+
+azure_iot_hub_sku: F1
