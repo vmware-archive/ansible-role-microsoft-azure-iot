@@ -20,4 +20,4 @@ galaxy_info:
     - vmware
 
 dependencies:
-  - brentwg.azure-cli
+  - huxoll.azure-cli

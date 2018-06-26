@@ -5,5 +5,9 @@
 azure_cli_application_id: AZURE_CLI_APPLICATION_ID
 azure_cli_application_key: AZURE_CLI_APPLICATION_KEY
 azure_cli_tenant_id: AZURE_CLI_TENANT_ID
+
+# Name of the IoT hub
 azure_iot_hub_name: AZURE_IOT_HUB_NAME
+
+# Group to contain the IoT resources (will be created).
 azure_iot_group: AZURE_IOT_GROUP
