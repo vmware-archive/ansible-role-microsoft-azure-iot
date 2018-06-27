@@ -3,7 +3,7 @@ image: williamyeh/ansible:ubuntu16.04
 
 before_script:
   - apt-get update -qq
-  - apt-get install -y git python-apt
+  - apt-get install -y git python-apt apt-transport-https
   - pip install -r requirements.txt
   - ansible-galaxy install -r tests/requirements.yml
   - cp extra_vars.yml.sample extra_vars.yml
