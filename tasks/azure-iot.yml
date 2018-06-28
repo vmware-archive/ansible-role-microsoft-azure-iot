@@ -66,15 +66,13 @@
     - azure_iot_hub_name is defined
   register: azure_iot_hubs
 
-- name: set azure_iot_hubs json
-  set_fact:
-    azure_iot_hubs_json: "{{ azure_iot_hubs.stdout | from_json }}"
-  when: azure_iot_hubs.changed
-
 - name: set azure_iot_hubs list
   set_fact:
-    azure_iot_hub_list: "{{ azure_iot_hubs_json | json_query('[*].name') }}"
-  when: azure_iot_hubs_json is defined
+    azure_iot_hub_list: >-
+      {{ azure_iot_hubs.stdout | from_json | json_query('[*].name') }}
+  when: azure_iot_hubs.changed
+  tags:
+    - skip_ansible_lint
 
 - name: debug iot hubs
   debug: var=azure_iot_hub_list
@@ -103,6 +101,8 @@
       {{ azure_iot_hub_devices.stdout |
       from_json | json_query('[*].deviceId') }}
   when: azure_iot_hub_devices.changed
+  tags:
+    - skip_ansible_lint
 
 - name: create Edge Device attached to the hub
   command: >
