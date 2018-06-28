@@ -11,8 +11,8 @@ before_script:
   - sed -ri "s:AZURE_CLI_APPLICATION_ID:${azure_cli_application_id}:" extra_vars.yml
   - sed -ri "s:AZURE_CLI_APPLICATION_KEY:$azure_cli_application_key:" extra_vars.yml
   - sed -ri "s:AZURE_CLI_TENANT_ID:${azure_cli_tenant_id}:" extra_vars.yml
-  - sed -ri "s:AZURE_IOT_HUB_NAME:travis-iot-hub:" extra_vars.yml
-  - sed -ri "s:AZURE_IOT_GROUP:travis-iot-group:" extra_vars.yml
+  - sed -ri "s:AZURE_IOT_HUB_NAME:ci-iot-hub:" extra_vars.yml
+  - sed -ri "s:AZURE_IOT_GROUP:ci-iot-group:" extra_vars.yml
 
 validate:
   script:

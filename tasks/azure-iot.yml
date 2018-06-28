@@ -10,9 +10,18 @@
   debug:
     msg: "Creating IoT hub '{{ azure_iot_hub_name }}'."
 
+- name: Check for Azure CLI install for MacOSX
+  command: brew info azure-cli
+  when: ansible_distribution == "MacOSX"
+  register: osx_azure_cli
+  ignore_errors: true
+
 - name: Just-in-time Azure CLI install for MacOSX
   command: brew install azure-cli
-  when: ansible_distribution == "MacOSX"
+  when:
+    - ansible_distribution == "MacOSX"
+    - not ansible_check_mode
+    - osx_azure_cli.rc != 0
 
 - name: List Azure CLI extensions
   command: >
@@ -50,6 +59,26 @@
     --location {{ azure_iot_location }}
   when: azure_iot_group is defined
 
+- name: list Azure iot hubs
+  command: >
+    {{ az }} iot hub list
+  when:
+    - azure_iot_hub_name is defined
+  register: azure_iot_hubs
+
+- name: set azure_iot_hubs json
+  set_fact:
+    azure_iot_hubs_json: "{{ azure_iot_hubs.stdout | from_json }}"
+  when: azure_iot_hubs.changed
+
+- name: set azure_iot_hubs list
+  set_fact:
+    azure_iot_hub_list: "{{ azure_iot_hubs_json | json_query('[*].name') }}"
+  when: azure_iot_hubs_json is defined
+
+- name: debug iot hubs
+  debug: var=azure_iot_hub_list
+
 - name: create Azure hub in the resource group
   command: >
     {{ az }} iot hub create
@@ -59,6 +88,21 @@
   when:
     - azure_iot_group is defined
     - azure_iot_hub_name is defined
+    - azure_iot_hub_name not in azure_iot_hub_list
+
+- name: list Azure iot devices at the hub
+  command: >
+    {{ az }} iot device list --hub-name {{ azure_iot_hub_name }}
+  when:
+    - azure_iot_hub_name is defined
+  register: azure_iot_hub_devices
+
+- name: set azure_iot_hub_devices list
+  set_fact:
+    azure_iot_hub_device_list: >-
+      {{ azure_iot_hub_devices.stdout |
+      from_json | json_query('[*].deviceId') }}
+  when: azure_iot_hub_devices.changed
 
 - name: create Edge Device attached to the hub
   command: >
@@ -69,3 +113,4 @@
   when:
     - azure_iot_group is defined
     - azure_iot_hub_name is defined
+    - "azure_iot_hub_name ~ '-edge' not in azure_iot_hub_device_list"
