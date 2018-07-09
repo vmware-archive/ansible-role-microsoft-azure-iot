@@ -33,9 +33,8 @@
   command: >
     {{ az }} extension add --name azure-cli-iot-ext
   when:
-    - az_extensions is defined and az_extensions.changed
+    - az_extensions is defined and 'skipped' not in az_extensions
     - "'azure-cli-iot-ext' not in az_extensions.stdout"
-  tags: skip_ansible_lint
 
 - name: validate Azure tenant
   command: >
