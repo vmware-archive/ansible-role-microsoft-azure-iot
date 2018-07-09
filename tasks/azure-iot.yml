@@ -33,8 +33,9 @@
   command: >
     {{ az }} extension add --name azure-cli-iot-ext
   when:
-    - az_extensions is defined
+    - az_extensions is defined and az_extensions.changed
     - "'azure-cli-iot-ext' not in az_extensions.stdout"
+  tags: skip_ansible_lint
 
 - name: validate Azure tenant
   command: >
@@ -86,6 +87,7 @@
   when:
     - azure_iot_group is defined
     - azure_iot_hub_name is defined
+    - azure_iot_hub_list is defined
     - azure_iot_hub_name not in azure_iot_hub_list
 
 - name: list Azure iot devices at the hub
@@ -113,4 +115,5 @@
   when:
     - azure_iot_group is defined
     - azure_iot_hub_name is defined
+    - azure_iot_hub_device_list is defined
     - "azure_iot_hub_name ~ '-edge' not in azure_iot_hub_device_list"
