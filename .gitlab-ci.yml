@@ -31,6 +31,7 @@ test_azure_iot_docker:
   image: docker:latest
   services:
     - docker:dind
+  before_script:
   script:
     - docker build -t $CI_REGISTRY_IMAGE:latest .
     - docker run $CI_REGISTRY_IMAGE:latest
