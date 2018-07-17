@@ -32,7 +32,14 @@ test_azure_iot_docker:
   services:
     - docker:dind
   before_script:
-    - echo "Don't do before_script here, not ubuntu."
+    - echo "Don't do normal before_script here, not ubuntu."
+    - cp extra_vars.yml.sample extra_vars.yml
+    - echo "Building config for tenant $azure_cli_tenant_id"
+    - sed -ri "s:AZURE_CLI_APPLICATION_ID:${azure_cli_application_id}:" extra_vars.yml
+    - sed -ri "s:AZURE_CLI_APPLICATION_KEY:$azure_cli_application_key:" extra_vars.yml
+    - sed -ri "s:AZURE_CLI_TENANT_ID:${azure_cli_tenant_id}:" extra_vars.yml
+    - sed -ri "s:AZURE_IOT_HUB_NAME:ci-iot-hub:" extra_vars.yml
+    - sed -ri "s:AZURE_IOT_GROUP:ci-iot-group:" extra_vars.yml
   script:
     - docker build -t $CI_REGISTRY_IMAGE:latest .
     - docker run $CI_REGISTRY_IMAGE:latest
