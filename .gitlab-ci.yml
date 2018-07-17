@@ -28,10 +28,12 @@ test_azure_iot:
       --extra-vars @extra_vars.yml
 
 test_azure_iot_docker:
+  image: docker:latest
+  services:
+    - docker:dind
   script:
-    - apt-get install -y docker.io
-    - docker build -t vmware/azure-iot .
-    - docker run vmware/azure-iot
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    - docker run $CI_REGISTRY_IMAGE:latest
 
 package_role:
   script:
