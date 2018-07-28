@@ -8,7 +8,7 @@
 
 - name: show hub to create
   debug:
-    msg: "Creating IoT hub '{{ azure_iot_hub_name }}'."
+    msg: "Creating/refreshing IoT hub '{{ azure_iot_hub_name }}'."
 
 - name: Check for Azure CLI install for MacOSX
   command: brew info azure-cli
@@ -91,7 +91,7 @@
 
 - name: list Azure iot devices at the hub
   command: >
-    {{ az }} iot device list --hub-name {{ azure_iot_hub_name }}
+    {{ az }} iot hub device-identity list --hub-name {{ azure_iot_hub_name }}
   when:
     - azure_iot_hub_name is defined
   register: azure_iot_hub_devices
@@ -105,14 +105,11 @@
   tags:
     - skip_ansible_lint
 
-- name: create Edge Device attached to the hub
-  command: >
-    {{ az }} iot device create
-    --device-id {{ azure_iot_hub_name }}-edge
-    --hub-name {{ azure_iot_hub_name }}
-    --resource-group {{ azure_iot_group }}
-  when:
-    - azure_iot_group is defined
-    - azure_iot_hub_name is defined
-    - azure_iot_hub_device_list is defined
-    - "azure_iot_hub_name ~ '-edge' not in azure_iot_hub_device_list"
+- set_fact:
+    azure_groups: {}
+
+# Create an edge device for each provided name.
+- include_tasks: azure-edge-device.yml
+  with_items: "{{ azure_iot_edge_names }}"
+  loop_control:
+    loop_var: azure_edge_group

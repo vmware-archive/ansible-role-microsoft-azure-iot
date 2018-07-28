@@ -13,3 +13,9 @@ azure_iot_location: westus
 azure_iot_hub_name: IoTHubName
 
 azure_iot_hub_sku: F1
+
+# These should be your set of edge locations at which you wish to run
+# an Azure Edge.
+azure_iot_edge_names:
+  - group1
+  - group2

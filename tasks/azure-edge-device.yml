@@ -1,0 +1,104 @@
+# Copyright © 2018 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+---
+# These tasks set up Azure Edges for use on the server side.
+
+- name: debug azure group
+  debug: msg="Creating/refreshing azure edge device for {{ azure_edge_group }}"
+
+- name: set edge device name
+  set_fact:
+    azure_edge_name: >-
+      {{ azure_edge_group }}-edge
+  when:
+    - azure_edge_group is defined
+
+- name: show existing Edge Device
+  command: >
+    {{ az }} iot hub device-identity show
+    --device-id {{ azure_edge_name }}
+    --hub-name {{ azure_iot_hub_name }}
+  register: current_azure_iot_hub_device
+  when:
+    - azure_iot_group is defined
+    - azure_iot_hub_name is defined
+    - azure_iot_hub_device_list is defined
+    - "azure_edge_name in azure_iot_hub_device_list"
+
+- name: create Edge Device attached to the hub
+  command: >
+    {{ az }} iot hub device-identity create
+    --device-id {{ azure_edge_name }}
+    --hub-name {{ azure_iot_hub_name }}
+    --resource-group {{ azure_iot_group }}
+    --edge-enabled
+  register: created_azure_iot_hub_device
+  when:
+    - azure_iot_group is defined
+    - azure_iot_hub_name is defined
+    - azure_iot_hub_device_list is defined
+    - "azure_edge_name not in azure_iot_hub_device_list"
+
+- name: set Edge Device when created
+  set_fact:
+    device_info: >-
+      {{ created_azure_iot_hub_device.stdout }}
+  when:
+    - created_azure_iot_hub_device.changed
+
+- name: set Edge Device when found
+  set_fact:
+    device_info: >-
+      {{ current_azure_iot_hub_device.stdout }}
+  when:
+    - current_azure_iot_hub_device.changed
+
+- name: extract Edge Device parameters
+  set_fact:
+    azure_iot_hub_device_primaryKey: >-
+      {{ device_info | json_query(primaryKey_query) }}
+    azure_iot_hub_device_secondaryKey: >-
+      {{ device_info | json_query(secondaryKey_query) }}
+  vars:
+    primaryKey_query: authentication.symmetricKey.primaryKey
+    secondaryKey_query: authentication.symmetricKey.secondaryKey
+  tags:
+    - skip_ansible_lint
+
+- debug: msg="Got device {{ azure_iot_hub_device_primaryKey }}"
+  when: azure_iot_hub_device_primaryKey is defined
+
+- debug: msg="Got device {{ azure_iot_hub_device_secondaryKey }}"
+  when: azure_iot_hub_device_secondaryKey is defined
+
+- name: Set initial dict of group details
+  set_fact:
+    _append_dict: {}
+
+- name: Create primay key tuple
+  set_fact:
+    _entry: "{ 'primaryKey': '{{ azure_iot_hub_device_primaryKey }}' }"
+  when: azure_iot_hub_device_primaryKey is defined
+
+- name: Add primary key to collected group data
+  set_fact:
+    _append_dict: "{{ _append_dict | combine ( _entry ) }}"
+  when: azure_iot_hub_device_primaryKey is defined
+
+- name: Create secondary key tuple
+  set_fact:
+    _entry: "{ 'secondaryKey': '{{ azure_iot_hub_device_secondaryKey }}' }"
+  when: azure_iot_hub_device_secondaryKey is defined
+
+- name: Add secondary key to collected group data
+  set_fact:
+    _append_dict: "{{ _append_dict | combine ( _entry ) }}"
+  when: azure_iot_hub_device_secondaryKey is defined
+
+- name: Add details to collected data
+  set_fact:
+    azure_groups: "{{ azure_groups | combine ( { azure_edge_group: _append_dict } ) }}"
+  when: _append_dict is defined
+
+- name: debug collected group data
+  debug: var=azure_groups
