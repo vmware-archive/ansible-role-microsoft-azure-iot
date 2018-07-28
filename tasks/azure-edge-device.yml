@@ -45,6 +45,8 @@
       {{ created_azure_iot_hub_device.stdout }}
   when:
     - created_azure_iot_hub_device.changed
+  tags:
+    - skip_ansible_lint
 
 - name: set Edge Device when found
   set_fact:
@@ -52,6 +54,8 @@
       {{ current_azure_iot_hub_device.stdout }}
   when:
     - current_azure_iot_hub_device.changed
+  tags:
+    - skip_ansible_lint
 
 - name: extract Edge Device parameters
   set_fact:

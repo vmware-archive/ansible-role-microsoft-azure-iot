@@ -105,7 +105,8 @@
   tags:
     - skip_ansible_lint
 
-- set_fact:
+- name: clear groups metadata
+  set_fact:
     azure_groups: {}
 
 # Create an edge device for each provided name.
