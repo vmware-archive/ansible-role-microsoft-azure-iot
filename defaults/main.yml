@@ -19,3 +19,13 @@ azure_iot_hub_sku: F1
 azure_iot_edge_names:
   - group1
   - group2
+
+# List of modules to deploy at the edge gateway.
+# The default is a sample simulated temperature sensor.
+azure_modules:
+  - name: tempSensor
+    image: mcr.microsoft.com/azureiotedge-simulated-temperature-sensor:1.0
+    desiredStatus: running
+    restartPolicy: always
+    createOptions: {}
+    desiredProperties: {}

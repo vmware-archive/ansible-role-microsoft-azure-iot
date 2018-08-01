@@ -3,4 +3,11 @@
 ---
 # This role provides the ability to manage Azure Iot resources.
 
+# General setup of Azure IoT resources
 - import_tasks: azure-iot.yml
+
+# Create an edge deployment for each provided name.
+- include_tasks: azure-deployment.yml
+  with_items: "{{ azure_iot_edge_names }}"
+  loop_control:
+    loop_var: azure_edge_group

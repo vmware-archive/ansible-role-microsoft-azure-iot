@@ -38,7 +38,7 @@
 
 - name: validate Azure tenant
   command: >
-    {{ az }} account show --query 'tenantId' -o tsv
+    {{ az }} account show --query 'tenantId'
   register: show_tenant
   ignore_errors: true
   when: azure_cli_tenant_id is defined
