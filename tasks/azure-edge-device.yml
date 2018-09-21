@@ -39,6 +39,19 @@
     - azure_iot_hub_device_list is defined
     - "azure_edge_name not in azure_iot_hub_device_list"
 
+- name: create Edge Device attached to the hub
+  command: >
+    {{ az }} iot hub device-twin update
+    --device-id {{ azure_edge_name }}
+    --hub-name {{ azure_iot_hub_name }}
+    --set tags='{
+    "azure_edge_group":"{{ azure_edge_group }}",
+    "skyway_edge": true
+    }'
+  register: updated_azure_iot_hub_device
+  when:
+    - created_azure_iot_hub_device.changed
+
 - name: set Edge Device when created
   set_fact:
     device_info: >-

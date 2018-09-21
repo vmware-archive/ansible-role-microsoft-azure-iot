@@ -13,6 +13,13 @@
   when:
     - azure_edge_group is defined
 
+- name: set or use edge deployment name
+  set_fact:
+    deployment_name: >-
+      {{ azure_edge_group }}
+  when:
+    deployment_name is undefined or deployment_name == ""
+
 - name: create tmp
   tempfile:
     state: directory
@@ -26,12 +33,44 @@
     backup: false
   when: not ansible_check_mode
 
-- name: Deploy configuration to edge device
+- name: List existing deployment to the edge device
   command: >
-    {{ az }} iot hub apply-configuration
-    --device-id {{ azure_edge_name }}
+    {{ az }} iot edge deployment show
+    --deployment-id {{ deployment_name }}
     --hub-name {{ azure_iot_hub_name }}
-    --content {{ tmp_deploy.path }}/deployment-manifest.json
-  register: apply_configuration_device
+  register: edge_deployment_show
+  ignore_errors: true
   when:
     - azure_iot_hub_name is defined
+    - deployment_name is defined
+
+- name: Create a deployment to the edge device (one device)
+  command: >
+    {{ az }} iot edge deployment create
+    --deployment-id {{ deployment_name }}
+    --hub-name {{ azure_iot_hub_name }}
+    --content {{ tmp_deploy.path }}/deployment-manifest.json
+    --target-condition "tags.azure_edge_group='{{ azure_edge_group }}'"
+  register: edge_deployment_create
+  when:
+    - edge_deployment_show.rc != 0
+    - azure_iot_hub_name is defined
+    - deployment_name == azure_edge_group
+
+- name: Create a deployment to the edge device (mass devices)
+  command: >
+    {{ az }} iot edge deployment create
+    --deployment-id {{ deployment_name }}
+    --hub-name {{ azure_iot_hub_name }}
+    --content {{ tmp_deploy.path }}/deployment-manifest.json
+    --target-condition "tags.skyway_edge=true"
+  register: edge_deployment_create
+  when:
+    - edge_deployment_show.rc != 0
+    - azure_iot_hub_name is defined
+    - deployment_name != azure_edge_group
+
+- name: Clear deployment name for next pass (if not supplied)
+  set_fact:
+    deployment_name: ""
+  when: deployment_name == azure_edge_group

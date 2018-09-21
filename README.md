@@ -32,20 +32,37 @@ azure_iot_hub_name=my-iot-hub
 
 # Resource group to contain the IoT resources (will be created if it doesn't exist).
 azure_iot_group=my-iot-resources
+
+# List of modules to deploy at the edge gateway. This is a sample module.
+azure_modules:
+  - name: tempSensor
+    image: mcr.microsoft.com/azureiotedge-simulated-temperature-sensor:1.0
+    desiredStatus: running
+    restartPolicy: always
+    createOptions: {}
+    desiredProperties: {}
+
+# Routes to ensure messages reach their destination.
+azure_routes:
+  - name: tempSensorToIoTHub
+    route: FROM /messages/modules/tempSensor/outputs/* INTO $upstream
+
+# Optional: name the deployment (to target all devices with a single deploy)
+deployment_name: OurGlobalDeployment
 ```
 
 Dependencies
 ------------
 
 This role depends on:
-* huxoll.azure-cli 
+* huxoll.azure-cli
 
 Example Playbook
 ----------------
 
 Here's an example playbook:
 
-    - hosts: servers
+    - hosts: iot-api-box
       roles:
          - { role: vmware.azure-iot }
 
