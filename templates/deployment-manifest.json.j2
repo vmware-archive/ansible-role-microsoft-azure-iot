@@ -31,7 +31,8 @@
             }
           },
           "modules": {
-  {% for module in azure_modules %}
+{% if azure_modules is defined %}
+{% for module in azure_modules %}
             "{{ module.name }}": {
               "version": "{{ module.version|default("1.0", true) }}",
               "type": "docker",
@@ -42,7 +43,8 @@
                 "createOptions": "{{ module.createOptions|default("{}", true) }}"
               }
             }{{ "," if not loop.last else "" }}
-  {% endfor %}
+{% endfor %}
+{% endif %}
           }
         }
       },
@@ -50,20 +52,24 @@
         "properties.desired": {
           "schemaVersion": "1.0",
           "routes": {
-  {% for route in azure_routes %}
+{% if azure_routes is defined %}
+{% for route in azure_routes %}
               "{{ route.name }}": "route.route"{{ "," if not loop.last else "" }}
-  {% endfor %}
+{% endfor %}
+{% endif %}
           },
           "storeAndForwardConfiguration": {
             "timeToLiveSecs": 7200
           }
         }
       },
-  {% for module in azure_modules %}
+{% if azure_modules is defined %}
+{% for module in azure_modules %}
       "{{ module.name }}": {
         "properties.desired": {{ module.desiredProperties|default("{}", true) }}
       }{{ "," if not loop.last else "" }}
-  {% endfor %}
+{% endfor %}
+{% endif %}
     }
   }
 }

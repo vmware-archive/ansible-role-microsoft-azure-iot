@@ -39,7 +39,7 @@
     - azure_iot_hub_device_list is defined
     - "azure_edge_name not in azure_iot_hub_device_list"
 
-- name: create Edge Device attached to the hub
+- name: Set tags for new Edge Device attached to the hub
   command: >
     {{ az }} iot hub device-twin update
     --device-id {{ azure_edge_name }}
@@ -51,6 +51,8 @@
   register: updated_azure_iot_hub_device
   when:
     - created_azure_iot_hub_device.changed
+  tags:
+    - skip_ansible_lint
 
 - name: set Edge Device when created
   set_fact:
