@@ -11,3 +11,19 @@ azure_iot_hub_name: AZURE_IOT_HUB_NAME
 
 # Group to contain the IoT resources (will be created).
 azure_iot_group: AZURE_IOT_GROUP
+
+# Routes to ensure messages reach their destination.
+azure_routes:
+  - name: tempSensorToIoTHub
+    route: FROM /messages/modules/tempSensor/outputs/* INTO $upstream
+
+# The role will create devices of the form {azure_device_stub}N, where N
+# is between 1 and azure_device_count.
+# These can be left undefined if no devices should be mass-created this way.
+# This will only create the device identity; deploying or configuring the
+# device itself is not currently supported.
+azure_device_stub: my-device
+azure_device_count: 3
+
+# Optional: name the deployment (to target all devices with a single deploy)
+# deployment_name: yeehaw

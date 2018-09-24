@@ -1,0 +1,51 @@
+# Copyright © 2018 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+---
+# These tasks set up Azure devices at the cloud side.
+
+- name: set device_name
+  set_fact:
+    device_name: "{{ azure_device_stub }}{{ device_index }}"
+  when: device_index is defined
+
+- name: debug azure device
+  debug: msg="Creating/refreshing azure device for {{ device_name }}"
+
+- name: show existing Edge Device
+  command: >
+    {{ az }} iot hub device-identity show
+    --device-id {{ device_name }}
+    --hub-name {{ azure_iot_hub_name }}
+  register: current_azure_iot_hub_device
+  when:
+    - azure_iot_group is defined
+    - azure_iot_hub_name is defined
+    - azure_iot_hub_device_list is defined
+    - "device_name in azure_iot_hub_device_list"
+
+- name: create device at the hub
+  command: >
+    {{ az }} iot hub device-identity create
+    --device-id {{ device_name }}
+    --hub-name {{ azure_iot_hub_name }}
+    --resource-group {{ azure_iot_group }}
+  register: created_azure_iot_hub_device
+  when:
+    - azure_iot_group is defined
+    - azure_iot_hub_name is defined
+    - azure_iot_hub_device_list is defined
+    - "device_name not in azure_iot_hub_device_list"
+
+- name: Set tags for new device to the hub
+  command: >
+    {{ az }} iot hub device-twin update
+    --device-id {{ device_name }}
+    --hub-name {{ azure_iot_hub_name }}
+    --set tags='{
+    "{{ auto_device_tag }}": true
+    }'
+  register: updated_azure_iot_hub_device
+  when:
+    - created_azure_iot_hub_device.changed
+  tags:
+    - skip_ansible_lint

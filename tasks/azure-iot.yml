@@ -109,6 +109,14 @@
   set_fact:
     azure_groups: {}
 
+# Create an iot device for all in the desired range.
+- name: Create our mass of device identities
+  include_tasks: azure-device.yml
+  with_sequence: start=1 end={{ azure_device_count }}
+  loop_control:
+    loop_var: device_index
+  when: azure_device_count is defined
+
 # Create an edge device for each provided name.
 - include_tasks: azure-edge-device.yml
   with_items: "{{ azure_iot_edge_names }}"

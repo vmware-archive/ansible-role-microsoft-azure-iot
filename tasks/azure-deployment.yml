@@ -63,7 +63,7 @@
     --deployment-id {{ deployment_name }}
     --hub-name {{ azure_iot_hub_name }}
     --content {{ tmp_deploy.path }}/deployment-manifest.json
-    --target-condition "tags.skyway_edge=true"
+    --target-condition "tags.{{ auto_edge_tag }}=true"
   register: edge_deployment_create
   when:
     - edge_deployment_show.rc != 0

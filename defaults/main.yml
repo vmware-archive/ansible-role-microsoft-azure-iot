@@ -29,3 +29,17 @@ azure_modules:
     restartPolicy: always
     createOptions: {}
     desiredProperties: {}
+
+# Routes to ensure messages reach their destination.
+# This default just sends the temperature sensor to the hub.
+azure_routes:
+  - name: tempSensorToIoTHub
+    route: FROM /messages/modules/tempSensor/outputs/* INTO $upstream
+
+# Tag used to designate edges we deploy.
+# It can have a different name but should be set for correct operation.
+auto_edge_tag: automatic_edge
+
+# Tag used to designate edges we create
+# It can have a different name but should be set for correct operation.
+auto_device_tag: automatic_device

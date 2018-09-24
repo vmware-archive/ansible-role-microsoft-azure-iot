@@ -47,8 +47,11 @@ azure_routes:
   - name: tempSensorToIoTHub
     route: FROM /messages/modules/tempSensor/outputs/* INTO $upstream
 
+azure_device_stub: my-device
+azure_device_count: 3
+
 # Optional: name the deployment (to target all devices with a single deploy)
-deployment_name: OurGlobalDeployment
+deployment_name: MyGlobalDeployment
 ```
 
 Dependencies

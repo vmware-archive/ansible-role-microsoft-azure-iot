@@ -46,7 +46,7 @@
     --hub-name {{ azure_iot_hub_name }}
     --set tags='{
     "azure_edge_group":"{{ azure_edge_group }}",
-    "skyway_edge": true
+    "{{ auto_edge_tag }}": true
     }'
   register: updated_azure_iot_hub_device
   when:
