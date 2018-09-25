@@ -98,27 +98,33 @@
 - name: Create primay key tuple
   set_fact:
     _entry: "{ 'primaryKey': '{{ azure_iot_hub_device_primaryKey }}' }"
+  no_log: true
   when: azure_iot_hub_device_primaryKey is defined
 
 - name: Add primary key to collected group data
   set_fact:
     _append_dict: "{{ _append_dict | combine ( _entry ) }}"
+  no_log: true
   when: azure_iot_hub_device_primaryKey is defined
 
 - name: Create secondary key tuple
   set_fact:
     _entry: "{ 'secondaryKey': '{{ azure_iot_hub_device_secondaryKey }}' }"
+  no_log: true
   when: azure_iot_hub_device_secondaryKey is defined
 
 - name: Add secondary key to collected group data
   set_fact:
     _append_dict: "{{ _append_dict | combine ( _entry ) }}"
+  no_log: true
   when: azure_iot_hub_device_secondaryKey is defined
 
 - name: Add details to collected data
   set_fact:
     azure_groups: "{{ azure_groups | combine ( { azure_edge_group: _append_dict } ) }}"
+  no_log: true
   when: _append_dict is defined
 
 - name: debug collected group data
+  no_log: true
   debug: var=azure_groups
