@@ -81,6 +81,7 @@
   vars:
     primaryKey_query: authentication.symmetricKey.primaryKey
     secondaryKey_query: authentication.symmetricKey.secondaryKey
+  when: device_info is defined
   tags:
     - skip_ansible_lint
 

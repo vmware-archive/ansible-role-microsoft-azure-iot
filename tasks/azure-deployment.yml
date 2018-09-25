@@ -53,9 +53,11 @@
     --target-condition "tags.azure_edge_group='{{ azure_edge_group }}'"
   register: edge_deployment_create
   when:
-    - edge_deployment_show.rc != 0
+    - edge_deployment_show.changed and edge_deployment_show.rc != 0
     - azure_iot_hub_name is defined
     - deployment_name == azure_edge_group
+  tags:
+    - skip_ansible_lint
 
 - name: Create a deployment to the edge device (mass devices)
   command: >
@@ -66,9 +68,11 @@
     --target-condition "tags.{{ auto_edge_tag }}=true"
   register: edge_deployment_create
   when:
-    - edge_deployment_show.rc != 0
+    - edge_deployment_show.changed and edge_deployment_show.rc != 0
     - azure_iot_hub_name is defined
     - deployment_name != azure_edge_group
+  tags:
+    - skip_ansible_lint
 
 - name: Clear deployment name for next pass (if not supplied)
   set_fact:
