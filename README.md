@@ -103,4 +103,12 @@ Alternatively, you can build a docker container and test that way.
 License
 -------
 
-Apache 2.0
+MIT
+
+Contributing
+------------
+
+The ansible-role-microsoft-azure-iot project team welcomes contributions from the community. If you wish to contribute code and you have not
+signed our contributor license agreement (CLA), our bot will update the issue when you open a Pull Request. For any
+questions about the CLA process, please refer to our [FAQ](https://cla.vmware.com/faq). For more detailed information,
+refer to [CONTRIBUTING.md](CONTRIBUTING.md).
