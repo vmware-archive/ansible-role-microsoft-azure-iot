@@ -5,7 +5,7 @@ galaxy_info:
   author: John Gardner
   description: Manage Azure IoT resources
   company: VMware
-  license: license (Apache-2.0)
+  license: MIT
   min_ansible_version: 2.4
 
   platforms:
