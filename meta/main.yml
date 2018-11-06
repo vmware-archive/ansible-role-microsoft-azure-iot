@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 ---
 galaxy_info:
+  role_name: azure-iot
   author: John Gardner
   description: Manage Azure IoT resources
   company: VMware
