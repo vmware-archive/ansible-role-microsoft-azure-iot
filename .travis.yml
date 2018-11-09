@@ -1,0 +1,43 @@
+---
+stages:
+  - lint
+  - test_role
+  - test_docker
+
+language: python
+
+sudo: required
+
+services:
+  - docker
+
+addons:
+  apt:
+    update: true
+
+before_install:
+  - echo "azure_cli_application_id: $azure_cli_application_id" >> exvars.yml
+  - echo "azure_cli_application_key: $azure_cli_application_key" >> exvars.yml
+  - echo "azure_cli_tenant_id: $azure_cli_tenant_id" >> exvars.yml
+  - echo "azure_iot_hub_name: ci-iot-hub" >> exvars.yml
+  - echo "azure_iot_group: ci-iot-group" >> exvars.yml
+
+jobs:
+  include:
+    - stage: lint
+      script:
+        - ansible-galaxy install -r requirements.yml
+        - ansible-playbook tests/test.yml -i tests/inventory --check
+        - which ansible-playbook
+    - stage: test_role
+      script:
+        - ansible-galaxy install -r requirements.yml
+        - >
+          ansible-playbook tests/test.yml -i tests/inventory
+          --extra-vars "@exvars.yml"
+    - stage: test_docker
+      script:
+        - docker build -t vmware/azure-iot .
+        - >
+          docker run -it --rm vmware/azure-iot tests/test.yml
+          -i tests/inventory --extra-vars "@exvars.yml" -v
