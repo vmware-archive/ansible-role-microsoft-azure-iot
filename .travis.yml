@@ -22,6 +22,7 @@ before_install:
   - sed -ri "s:AZURE_CLI_TENANT_ID:${azure_cli_tenant_id}:" exvars.yml
   - sed -ri "s:AZURE_IOT_HUB_NAME:ci-iot-hub:" exvars.yml
   - sed -ri "s:AZURE_IOT_GROUP:ci-iot-group:" exvars.yml
+  - sudo pip install -r requirements.txt
 
 jobs:
   include:
